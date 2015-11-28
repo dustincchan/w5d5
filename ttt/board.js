@@ -3,3 +3,5 @@ function Board () {
               [null, null, null],
               [null, null, null]];
 }
+
+module.exports = Board;

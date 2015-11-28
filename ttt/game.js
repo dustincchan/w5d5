@@ -1,7 +1,8 @@
-var board = require("./board.js");
+var Board = require("./board.js");
 
 function TicTacToe (reader) {
   this.reader = reader;
+  this.board = new Board();
   this.symbol = "x";
   this.winner = null;
 }
@@ -33,9 +34,9 @@ Array.prototype.allValuesSame = function() {
 
 TicTacToe.prototype.checkColumns = function () {
   for (var col = 0; col < 3; col++) {
-    var tempCol = [board.grid[0][col],
-                  board.grid[1][col],
-                  board.grid[2][col]];
+    var tempCol = [this.board.grid[0][col],
+                  this.board.grid[1][col],
+                  this.board.grid[2][col]];
 
     if (tempCol.allValuesSame()){
       this.winner = tempCol[0];
@@ -46,15 +47,15 @@ TicTacToe.prototype.checkColumns = function () {
 };
 
 TicTacToe.prototype.checkDiag = function () {
-  var diag1 = [board.grid[0][0],
-              board.grid[1][1],
-              board.grid[2][2]];
+  var diag1 = [this.board.grid[0][0],
+              this.board.grid[1][1],
+              this.board.grid[2][2]];
 
-  var diag2 = [board.grid[0][2],
-              board.grid[1][1],
-              board.grid[2][0]];
+  var diag2 = [this.board.grid[0][2],
+              this.board.grid[1][1],
+              this.board.grid[2][0]];
   if (diag1.allValuesSame() || diag2.allValuesSame()) {
-    this.winner = board.grid[1][1];
+    this.winner = this.board.grid[1][1];
     return true;
   }
   return false;
@@ -62,7 +63,7 @@ TicTacToe.prototype.checkDiag = function () {
 
 TicTacToe.prototype.checkRows = function () {
   for (var row = 0; row < 3; row++) {
-    if (row.allValuesSame()) {
+    if (this.board.grid[row].allValuesSame()) {
       this.winner = row[0];
       return true;
     }
@@ -71,26 +72,27 @@ TicTacToe.prototype.checkRows = function () {
 };
 
 
-TicTacToe.prototype.checkForWinner = function () {
-//   if (this.checkRows()) {
-//     return true;
-//   } else if (this.check)
+TicTacToe.prototype.gameOver = function () {
+  if (this.checkRows()) {
+    return true;
+  } else if (this.checkColumns()) {
+    return true;
+  } else if (this.checkDiag()) {
+    return true;
+  } else {
+    return this.boardFull();
+  }
 };
 
 TicTacToe.prototype.boardFull = function () {
   for (var row = 0; row < 3; row++) {
     for (var col = 0; col < 3; col++) {
-      if (board.grid[row][col] === null) {
+      if (this.board.grid[row][col] === null) {
         return false;
       }
     }
   }
   return true;
-};
-
-TicTacToe.prototype.gameOver = function () {
-
-  return this.boardFull();
 };
 
 TicTacToe.prototype.swapSymbol = function () {
@@ -102,17 +104,17 @@ TicTacToe.prototype.swapSymbol = function () {
 };
 
 TicTacToe.prototype.move = function (row, col) {
-  if (board.grid[row][col]) {
+  if (this.board.grid[row][col]) {
     return false;
   } else {
-    board.grid[row][col] = this.symbol;
+    this.board.grid[row][col] = this.symbol;
     this.swapSymbol();
   }
 };
 
 TicTacToe.prototype.print = function () {
-  for (var i = 0; i < board.grid.length; i++) {
-    console.log(board.grid[i]);
+  for (var i = 0; i < this.board.grid.length; i++) {
+    console.log(this.board.grid[i]);
   }
 };
 
@@ -126,3 +128,5 @@ TicTacToe.prototype.promptMove = function (callback) {
     });
   });
 };
+
+module.exports = TicTacToe;
